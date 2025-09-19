@@ -1,47 +1,36 @@
-import Link from "next/link";
+import React from "react";
+import { notFound } from "next/navigation";
 import { getPostBySlug } from "@/lib/posts";
 
-type Props = {
-  params: { slug: string };
-};
-
-export default function PostPage({ params }: Props) {
+export default function PostPage({ params }: { params: { slug: string } }) {
   const post = getPostBySlug(params.slug);
 
   if (!post) {
-    return (
-      <div className="min-h-screen p-6 sm:p-12 mx-auto max-w-4xl">
-        <h1 className="text-2xl font-bold">Post not found</h1>
-        <p className="mt-4">We could not find the article you were looking for.</p>
-        <p className="mt-6">
-          <Link href="/">← Back to home</Link>
-        </p>
-      </div>
-    );
+    notFound();
   }
 
   return (
-    <main className="min-h-screen p-6 sm:p-12 mx-auto max-w-4xl">
+    <div className="min-h-screen p-6 sm:p-12 font-sans mx-auto max-w-3xl">
       <article>
-        {post.cover && (
-          <div className="mb-6 overflow-hidden rounded-lg">
-            <img src={post.cover} alt={post.title} className="w-full h-64 object-cover" />
-          </div>
-        )}
-
-        <header className="mb-4">
-          <h1 className="text-3xl sm:text-4xl font-bold">{post.title}</h1>
+        <header className="mb-6">
+          <h1 className="text-4xl font-bold">{post.title}</h1>
           <p className="text-sm text-gray-500 mt-1">{new Date(post.date).toLocaleDateString()}</p>
         </header>
 
-        <div className="prose max-w-none text-gray-800 dark:text-gray-200">
+        {post.cover && (
+          <div className="mb-6">
+            <img src={post.cover} alt={post.title} className="w-full h-64 object-cover rounded" />
+          </div>
+        )}
+
+        <div className="prose dark:prose-invert text-gray-800 dark:text-gray-200">
           <p>{post.content}</p>
         </div>
 
-        <footer className="mt-8">
-          <Link href="/">← Back to home</Link>
-        </footer>
+        <div className="mt-8">
+          <a href="/posts" className="text-blue-600 text-sm">← Back to posts</a>
+        </div>
       </article>
-    </main>
+    </div>
   );
 }
